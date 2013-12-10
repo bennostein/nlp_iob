@@ -130,7 +130,7 @@ class FilePreprocess():
 		for line in filein:
 			line_list = line.split('\t')
 			if self.word_dict[line_list[0]] == 1:
-				line_list[0] = 'UNKOWN'
+				line_list[0] = 'UNKOWN '
 				line = '\t'.join(line_list)
 			fileout.write(line)
 		filein.close()
@@ -143,7 +143,7 @@ class FilePreprocess():
 			if line != '\n':
 				line = line.rstrip('\n')
 				if not line in word_set:
-					line = 'UNKOWN'
+					line = 'UNKOWN '
 				fileout.write(line + '\n')
 			else:
 				fileout.write(line)
