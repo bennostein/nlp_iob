@@ -1,4 +1,6 @@
-filein = open('modified_train.txt', 'r')
+import re
+
+filein = open('gene.train.txt', 'r')
 
 B_list = []
 I_list = []
@@ -24,22 +26,22 @@ O_set = set(O_list)
 word_set = set(word_list)
 unique_word_list = list(word_set)
 
-# 15514, 6069 / 2810 with UNKOWN
+# 16637, 6372
 print len(B_list), len(B_set)
-# 22656, 3128 / 2273 with UNKOWN
+# 24435, 3286
 print len(I_list), len(I_set)
-# 309526, 23372 / 11331 with UNKOWN
+# 345128, 25095
 print len(O_list), len(O_set)
-# 347696 with UNKOWN
+# 386200 with UNKOWN
 print len(word_list)
 
 print B_set
 print I_set
-# 1167, 1119, 1487 / 1168, 1120, 1488 with UNKOWN
+# 1247, 1218, 1564
 print len(B_set & I_set)
 print len(B_set & O_set)
 print len(I_set & O_set)
-# 13204 with UNKOWN
+# 31328
 print len(unique_word_list)
 
 B_tup = tuple(B_list)
@@ -50,8 +52,8 @@ B_dict = {}
 I_dict = {}
 O_dict = {}
 for word in unique_word_list:
-	B_dict[word] = 1
-	I_dict[word] = 1
+	B_dict[word] = 0
+	I_dict[word] = 0
 	O_dict[word] = 0
 
 for word in B_tup:
@@ -64,18 +66,117 @@ for word in O_tup:
 	O_dict[word] += 1
 
 for word in unique_word_list:
-	B_dict[word] = B_dict[word] / (347696.0 + 3916.0)
-	I_dict[word] = I_dict[word] / (347696.0 + 3916.0)
-	O_dict[word] = O_dict[word] / (347696.0 + 3916.0)
+	B_dict[word] = B_dict[word] / 16637.0
+	I_dict[word] = I_dict[word] / 24435.0
+	O_dict[word] = O_dict[word] / 345128.0
 
 tag_word_prob_dict = {}
 tag_word_prob_dict['B\n'] = B_dict
 tag_word_prob_dict['I\n'] = I_dict
 tag_word_prob_dict['O\n'] = O_dict
 
-print tag_word_prob_dict['B\n']['phosphatases ']
-print tag_word_prob_dict['I\n']['phosphatases ']
-print tag_word_prob_dict['O\n']['phosphatases ']
+once_count_B = 0
+for word in tag_word_prob_dict['B\n'].keys():
+	if tag_word_prob_dict['B\n'][word] == 1 / 16637.0:
+		once_count_B += 1
+
+once_count_I = 0
+for word in tag_word_prob_dict['I\n'].keys():
+	if tag_word_prob_dict['I\n'][word] == 1 / 24435.0:
+		once_count_I += 1
+
+once_count_O = 0
+for word in tag_word_prob_dict['O\n'].keys():
+	if tag_word_prob_dict['O\n'][word] == 1 / 345128.0:
+		once_count_O += 1
+
+# 4186, 2016, 13368
+print once_count_B, once_count_I, once_count_O
+
+# process UNKOWN words
+pattern_num = re.compile(r'.*\d+.*')
+pattern_mix = re.compile(r'(?:^[a-z]+[A-Z]+[a-zA-Z]*|^[A-Z]+[a-z]+[a-zA-Z]*)')
+
+UNKOWN_long_B = 0
+UNKOWN_num_B = 0
+UNKOWN_allUpper_B = 0
+UNKOWN_mix_B = 0
+for word in tag_word_prob_dict['B\n'].keys():
+	if tag_word_prob_dict['B\n'][word] == 1 / 16637.0:
+		if len(word) >= 8:
+			UNKOWN_long_B += 1
+		elif pattern_num.match(word) != None:
+			UNKOWN_num_B += 1
+		elif word.isupper():
+			UNKOWN_allUpper_B += 1
+		elif pattern_mix.match(word) != None:
+			UNKOWN_mix_B += 1
+
+UNKOWN_long_I = 0
+UNKOWN_num_I = 0
+UNKOWN_allUpper_I = 0
+UNKOWN_mix_I = 0
+for word in tag_word_prob_dict['I\n'].keys():
+	if tag_word_prob_dict['I\n'][word] == 1 / 24435.0:
+		if len(word) >= 8:
+			UNKOWN_long_I += 1
+		elif pattern_num.match(word) != None:
+			UNKOWN_num_I += 1
+		elif word.isupper():
+			UNKOWN_allUpper_I += 1
+		elif pattern_mix.match(word) != None:
+			UNKOWN_mix_I += 1
+
+UNKOWN_long_O = 0
+UNKOWN_num_O = 0
+UNKOWN_allUpper_O = 0
+UNKOWN_mix_O = 0
+for word in tag_word_prob_dict['O\n'].keys():
+	if tag_word_prob_dict['O\n'][word] == 1 / 345128.0:
+		if len(word) >= 8:
+			UNKOWN_long_O += 1
+		elif pattern_num.match(word) != None:
+			UNKOWN_num_O += 1
+		elif word.isupper():
+			UNKOWN_allUpper_O += 1
+		elif pattern_mix.match(word) != None:
+			UNKOWN_mix_O += 1
+
+print 'long word count:'
+# 567, 548, 6860
+print UNKOWN_long_B, UNKOWN_long_I, UNKOWN_long_O
+print 'word has num count:'
+# 1781, 580, 1580
+print UNKOWN_num_B, UNKOWN_num_I, UNKOWN_num_O
+print 'all upper word count:'
+# 564, 295, 1426
+print UNKOWN_allUpper_B, UNKOWN_allUpper_I, UNKOWN_allUpper_O
+print 'mix word:'
+# 916, 272, 1611
+print UNKOWN_mix_B, UNKOWN_mix_I, UNKOWN_mix_O
+print 'other word:'
+# 358, 321, 1891
+print once_count_B - UNKOWN_long_B - UNKOWN_num_B - UNKOWN_allUpper_B - UNKOWN_mix_B
+print once_count_I - UNKOWN_long_I - UNKOWN_num_I - UNKOWN_allUpper_I - UNKOWN_mix_I
+print once_count_O - UNKOWN_long_O - UNKOWN_num_O - UNKOWN_allUpper_O - UNKOWN_mix_O
+
+# update the tag word prob dict
+for word in tag_word_prob_dict['B\n'].keys():
+	if tag_word_prob_dict['B\n'][word] == 
+
+# prob_sum_B = 0.0
+# for word in tag_word_prob_dict['B\n'].keys():
+# 	prob_sum_B += tag_word_prob_dict['B\n'][word]
+
+# prob_sum_I = 0.0
+# for word in tag_word_prob_dict['I\n'].keys():
+# 	prob_sum_I += tag_word_prob_dict['I\n'][word]
+
+# prob_sum_O = 0.0
+# for word in tag_word_prob_dict['O\n'].keys():
+# 	prob_sum_O += tag_word_prob_dict['O\n'][word]
+
+# print prob_sum_B, prob_sum_I, prob_sum_O
 
 trans_item_list = []
 for i in range(0, len(tag_list) - 1):
@@ -83,19 +184,19 @@ for i in range(0, len(tag_list) - 1):
 	trans_item_list.append(item)
 
 B_trans_prob_dict = {}
-B_trans_prob_dict['B\n'] = (trans_item_list.count(['B\n', 'B\n'])) / 15514.0
-B_trans_prob_dict['I\n'] = (trans_item_list.count(['B\n', 'I\n'])) / 15514.0
-B_trans_prob_dict['O\n'] = (trans_item_list.count(['B\n', 'O\n'])) / 15514.0
+B_trans_prob_dict['B\n'] = (trans_item_list.count(['B\n', 'B\n']) + 1) / (16637.0 + 3.0)
+B_trans_prob_dict['I\n'] = (trans_item_list.count(['B\n', 'I\n']) + 1) / (16637.0 + 3.0)
+B_trans_prob_dict['O\n'] = (trans_item_list.count(['B\n', 'O\n']) + 1) / (16637.0 + 3.0)
 
 I_trans_prob_dict = {}
-I_trans_prob_dict['B\n'] = (trans_item_list.count(['I\n', 'B\n'])) / 22656.0
-I_trans_prob_dict['I\n'] = (trans_item_list.count(['I\n', 'I\n'])) / 22656.0
-I_trans_prob_dict['O\n'] = (trans_item_list.count(['I\n', 'O\n'])) / 22656.0
+I_trans_prob_dict['B\n'] = (trans_item_list.count(['I\n', 'B\n']) + 1) / (24435.0 + 3.0)
+I_trans_prob_dict['I\n'] = (trans_item_list.count(['I\n', 'I\n']) + 1) / (24435.0 + 3.0)
+I_trans_prob_dict['O\n'] = (trans_item_list.count(['I\n', 'O\n']) + 1) / (24435.0 + 3.0)
 
 O_trans_prob_dict = {}
-O_trans_prob_dict['B\n'] = (trans_item_list.count(['O\n', 'B\n'])) / 309526.0
-O_trans_prob_dict['I\n'] = (trans_item_list.count(['O\n', 'I\n'])) / 309526.0
-O_trans_prob_dict['O\n'] = (trans_item_list.count(['O\n', 'O\n'])) / 309526.0
+O_trans_prob_dict['B\n'] = (trans_item_list.count(['O\n', 'B\n']) + 1) / (345128.0 + 3.0)
+O_trans_prob_dict['I\n'] = (trans_item_list.count(['O\n', 'I\n']) + 1) / (345128.0 + 3.0)
+O_trans_prob_dict['O\n'] = (trans_item_list.count(['O\n', 'O\n']) + 1) / (345128.0 + 3.0)
 
 tag_trans_prob_dict = {}
 tag_trans_prob_dict['B\n'] = B_trans_prob_dict
@@ -104,7 +205,10 @@ tag_trans_prob_dict['O\n'] = O_trans_prob_dict
 
 print tag_trans_prob_dict
 
-num_sentence = word_list.count('. ')
+num_sentence = word_list.count('.')
+# 15509
+print num_sentence
+
 start_prob_dict = {}
 start_prob_dict['B\n'] = 1.0 / (num_sentence + 2)
 start_prob_dict['I\n'] = 1.0 / (num_sentence + 2)
