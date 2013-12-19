@@ -1,5 +1,5 @@
-fileIn = open('test.verify.txt', 'r')
-fileOut = open('test.txt', 'w')
+fileIn = open('gene.train.txt', 'r')
+fileOut = open('test_all.txt', 'w')
 
 for line in fileIn:
 	if line != '\n':

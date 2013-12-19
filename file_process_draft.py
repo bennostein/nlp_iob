@@ -1,6 +1,6 @@
 import re
 
-filein = open('gene.train.txt', 'r')
+filein = open('modified.train.txt', 'r')
 
 B_list = []
 I_list = []
@@ -26,13 +26,13 @@ O_set = set(O_list)
 word_set = set(word_list)
 unique_word_list = list(word_set)
 
-# 16637, 6372
+# 16637, 6372 / 2987 with UNKs
 print len(B_list), len(B_set)
-# 24435, 3286
+# 24435, 3286 / 2403 with UNKs
 print len(I_list), len(I_set)
-# 345128, 25095
+# 345128, 25095 / 12181 with UNKs
 print len(O_list), len(O_set)
-# 386200 with UNKOWN
+# 386200
 print len(word_list)
 
 print B_set
@@ -93,90 +93,101 @@ for word in tag_word_prob_dict['O\n'].keys():
 # 4186, 2016, 13368
 print once_count_B, once_count_I, once_count_O
 
-# process UNKOWN words
-pattern_num = re.compile(r'.*\d+.*')
-pattern_mix = re.compile(r'(?:^[a-z]+[A-Z]+[a-zA-Z]*|^[A-Z]+[a-z]+[a-zA-Z]*)')
+print tag_word_prob_dict['B\n']['UNKOWN_mix']
 
-UNKOWN_long_B = 0
-UNKOWN_num_B = 0
-UNKOWN_allUpper_B = 0
-UNKOWN_mix_B = 0
-for word in tag_word_prob_dict['B\n'].keys():
-	if tag_word_prob_dict['B\n'][word] == 1 / 16637.0:
-		if len(word) >= 8:
-			UNKOWN_long_B += 1
-		elif pattern_num.match(word) != None:
-			UNKOWN_num_B += 1
-		elif word.isupper():
-			UNKOWN_allUpper_B += 1
-		elif pattern_mix.match(word) != None:
-			UNKOWN_mix_B += 1
+# # process UNKOWN words
+# pattern_num = re.compile(r'.*\d+.*')
+# pattern_mix = re.compile(r'(?:^[a-z]+[A-Z]+[a-zA-Z]*|^[A-Z]+[a-z]+[a-zA-Z]*)')
 
-UNKOWN_long_I = 0
-UNKOWN_num_I = 0
-UNKOWN_allUpper_I = 0
-UNKOWN_mix_I = 0
-for word in tag_word_prob_dict['I\n'].keys():
-	if tag_word_prob_dict['I\n'][word] == 1 / 24435.0:
-		if len(word) >= 8:
-			UNKOWN_long_I += 1
-		elif pattern_num.match(word) != None:
-			UNKOWN_num_I += 1
-		elif word.isupper():
-			UNKOWN_allUpper_I += 1
-		elif pattern_mix.match(word) != None:
-			UNKOWN_mix_I += 1
-
-UNKOWN_long_O = 0
-UNKOWN_num_O = 0
-UNKOWN_allUpper_O = 0
-UNKOWN_mix_O = 0
-for word in tag_word_prob_dict['O\n'].keys():
-	if tag_word_prob_dict['O\n'][word] == 1 / 345128.0:
-		if len(word) >= 8:
-			UNKOWN_long_O += 1
-		elif pattern_num.match(word) != None:
-			UNKOWN_num_O += 1
-		elif word.isupper():
-			UNKOWN_allUpper_O += 1
-		elif pattern_mix.match(word) != None:
-			UNKOWN_mix_O += 1
-
-print 'long word count:'
-# 567, 548, 6860
-print UNKOWN_long_B, UNKOWN_long_I, UNKOWN_long_O
-print 'word has num count:'
-# 1781, 580, 1580
-print UNKOWN_num_B, UNKOWN_num_I, UNKOWN_num_O
-print 'all upper word count:'
-# 564, 295, 1426
-print UNKOWN_allUpper_B, UNKOWN_allUpper_I, UNKOWN_allUpper_O
-print 'mix word:'
-# 916, 272, 1611
-print UNKOWN_mix_B, UNKOWN_mix_I, UNKOWN_mix_O
-print 'other word:'
-# 358, 321, 1891
-print once_count_B - UNKOWN_long_B - UNKOWN_num_B - UNKOWN_allUpper_B - UNKOWN_mix_B
-print once_count_I - UNKOWN_long_I - UNKOWN_num_I - UNKOWN_allUpper_I - UNKOWN_mix_I
-print once_count_O - UNKOWN_long_O - UNKOWN_num_O - UNKOWN_allUpper_O - UNKOWN_mix_O
-
-# update the tag word prob dict
-for word in tag_word_prob_dict['B\n'].keys():
-	if tag_word_prob_dict['B\n'][word] == 
-
-# prob_sum_B = 0.0
+# UNKOWN_long_B = 0
+# UNKOWN_num_B = 0
+# UNKOWN_allUpper_B = 0
+# UNKOWN_mix_B = 0
 # for word in tag_word_prob_dict['B\n'].keys():
-# 	prob_sum_B += tag_word_prob_dict['B\n'][word]
+# 	if tag_word_prob_dict['B\n'][word] == 1 / 16637.0:
+# 		if len(word) >= 8:
+# 			UNKOWN_long_B += 1
+# 		elif pattern_num.match(word) != None:
+# 			UNKOWN_num_B += 1
+# 		elif word.isupper():
+# 			UNKOWN_allUpper_B += 1
+# 		elif pattern_mix.match(word) != None:
+# 			UNKOWN_mix_B += 1
 
-# prob_sum_I = 0.0
+# UNKOWN_long_I = 0
+# UNKOWN_num_I = 0
+# UNKOWN_allUpper_I = 0
+# UNKOWN_mix_I = 0
 # for word in tag_word_prob_dict['I\n'].keys():
-# 	prob_sum_I += tag_word_prob_dict['I\n'][word]
+# 	if tag_word_prob_dict['I\n'][word] == 1 / 24435.0:
+# 		if len(word) >= 8:
+# 			UNKOWN_long_I += 1
+# 		elif pattern_num.match(word) != None:
+# 			UNKOWN_num_I += 1
+# 		elif word.isupper():
+# 			UNKOWN_allUpper_I += 1
+# 		elif pattern_mix.match(word) != None:
+# 			UNKOWN_mix_I += 1
 
-# prob_sum_O = 0.0
+# UNKOWN_long_O = 0
+# UNKOWN_num_O = 0
+# UNKOWN_allUpper_O = 0
+# UNKOWN_mix_O = 0
 # for word in tag_word_prob_dict['O\n'].keys():
-# 	prob_sum_O += tag_word_prob_dict['O\n'][word]
+# 	if tag_word_prob_dict['O\n'][word] == 1 / 345128.0:
+# 		if len(word) >= 8:
+# 			UNKOWN_long_O += 1
+# 		elif pattern_num.match(word) != None:
+# 			UNKOWN_num_O += 1
+# 		elif word.isupper():
+# 			UNKOWN_allUpper_O += 1
+# 		elif pattern_mix.match(word) != None:
+# 			UNKOWN_mix_O += 1
 
-# print prob_sum_B, prob_sum_I, prob_sum_O
+# print 'long word count:'
+# # 567, 548, 6860
+# print UNKOWN_long_B, UNKOWN_long_I, UNKOWN_long_O
+# print 'word has num count:'
+# # 1781, 580, 1580
+# print UNKOWN_num_B, UNKOWN_num_I, UNKOWN_num_O
+# print 'all upper word count:'
+# # 564, 295, 1426
+# print UNKOWN_allUpper_B, UNKOWN_allUpper_I, UNKOWN_allUpper_O
+# print 'mix word:'
+# # 916, 272, 1611
+# print UNKOWN_mix_B, UNKOWN_mix_I, UNKOWN_mix_O
+# print 'other word:'
+# # 358, 321, 1891
+# print once_count_B - UNKOWN_long_B - UNKOWN_num_B - UNKOWN_allUpper_B - UNKOWN_mix_B
+# print once_count_I - UNKOWN_long_I - UNKOWN_num_I - UNKOWN_allUpper_I - UNKOWN_mix_I
+# print once_count_O - UNKOWN_long_O - UNKOWN_num_O - UNKOWN_allUpper_O - UNKOWN_mix_O
+
+# # update the tag word prob dict
+# for word in tag_word_prob_dict['B\n'].keys():
+# 	if tag_word_prob_dict['B\n'][word] == 1 / 16637.0:
+# 		del tag_word_prob_dict['B\n'][word]
+
+# for word in tag_word_prob_dict['I\n'].keys():
+# 	if tag_word_prob_dict['I\n'][word] == 1 / 24435.0:
+# 		del tag_word_prob_dict['I\n'][word]
+
+# for word in tag_word_prob_dict['O\n'].keys():
+# 	if tag_word_prob_dict['O\n'][word] == 1 / 16637.0:
+# 		del tag_word_prob_dict['O\n'][word]
+
+prob_sum_B = 0.0
+for word in tag_word_prob_dict['B\n'].keys():
+	prob_sum_B += tag_word_prob_dict['B\n'][word]
+
+prob_sum_I = 0.0
+for word in tag_word_prob_dict['I\n'].keys():
+	prob_sum_I += tag_word_prob_dict['I\n'][word]
+
+prob_sum_O = 0.0
+for word in tag_word_prob_dict['O\n'].keys():
+	prob_sum_O += tag_word_prob_dict['O\n'][word]
+
+print prob_sum_B, prob_sum_I, prob_sum_O
 
 trans_item_list = []
 for i in range(0, len(tag_list) - 1):
