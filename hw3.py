@@ -24,7 +24,6 @@ class FilePreProcess():
 	def replace_train_file(self, filein, fileout):
 		filein = open(filein, 'r')
 		fileout = open(fileout, 'w')
-
 		pattern_num = re.compile(r'.*\d+.*')
 		pattern_mix = re.compile(r'(?:^[a-z]+[A-Z]+[a-zA-Z]*|^[A-Z]+[a-z]+[a-zA-Z]*)')
 
@@ -196,7 +195,6 @@ def viterbi(obs, states, start_p, trans_p, emit_p):
 	for t in range(1, len(obs)):
 		V.append({})
 		newpath = {}
-
 		for y in states:
 			(prob, state) = max((V[t-1][y0] * trans_p[y0][y] * emit_p[y][obs[t]], y0) for y0 in states)
 			V[t][y] = prob
@@ -249,9 +247,9 @@ def main():
 	tag_word_prob_dict = train_process.get_tag_word_prob_dict()
 	train_process.file_close()
 
-	testname = 'test_2.txt'
+	testname = 'gene.dev'
 	test_pre_process = FilePreProcess(testname)
-	new_testname = 'modified.test_2.txt'
+	new_testname = 'modified.gene.dev'
 	word_set = set(train_process.unique_word_list)
 	test_pre_process.replace_test_file(testname, new_testname, word_set)
 
@@ -263,7 +261,7 @@ def main():
 		res_list.append(path)
 
 	raw_word_list = read_test_file(testname)
-	output_result(raw_word_list, res_list, 'output.txt')
+	output_result(raw_word_list, res_list, 'output.gene.txt')
 
 
 if __name__ == '__main__':
